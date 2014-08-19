@@ -11,14 +11,17 @@ i686-gdcproject-linux-gnu:
 boot.o: boot.s
 	$(AS) -c boot.s -o boot.o
 
+io.o: io.c
+	$(CC) -c io.c -o io.o
+
 kernel.o: kernel.d
 	$(GDC) -c kernel.d -o kernel.o
 
-kernel.bin: i686-gdcproject-linux-gnu boot.o kernel.o
-	$(CC) -T linker.ld -o kernel.bin -ffreestanding -nostdlib boot.o kernel.o -lgcc
+kernel.bin: i686-gdcproject-linux-gnu boot.o kernel.o io.o
+	$(CC) -T linker.ld -o kernel.bin -ffreestanding -nostdlib boot.o kernel.o io.o -lgcc
 
 run:
-	qemu-system-i386 -kernel kernel.bin
+	qemu-system-i386 -nographic -kernel kernel.bin
 
 clean:
 	rm -f *.o kernel.bin
